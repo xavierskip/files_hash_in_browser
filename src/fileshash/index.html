@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#️⃣ files with SHA1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="drop_zone" class="dropzone">
+            <p>将文件拖拽到该区域</p>
+            <table id="files_table">
+                <thead class="noneDisplay">
+                    <tr>
+                      <th class="hashThWidth">hash</th>
+                      <th class="sizeThWidth">size</th>
+                      <th class="nameThWidth">name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="noneDisplay loader">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div> 
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

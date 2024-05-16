@@ -1,3 +1,8 @@
+## demo
+[演示](https://files-hash-in-browser.vercel.app/)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/xavierskip/files_hash_in_browser&repository-name=files_hash_in_browser)
+
 ## 作用
 将文件拖拽到页面指定位置，就可以在页面中显示文件的sha1 hash值，可以拖入多个文件，同时得到多个文件hash值用于比对，以**第一个文件的hash值作为标准**，与之相同的显示为绿色字体，不同则为红色字体，这样，这些文件是不是相同文件一目了然。
 

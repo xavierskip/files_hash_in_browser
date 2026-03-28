@@ -4,16 +4,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#️⃣ files with SHA1</title>
+    <title>files hash in browser</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='2' width='24' height='28' rx='2' fill='%23faebd7' stroke='%23ccc' stroke-width='1.5'/><text x='16' y='22' font-size='14' font-family='monospace' font-weight='bold' text-anchor='middle' fill='%23555'>H</text></svg>">
 </head>
 <body>
+    <div class="controls">
+        <label for="hash-algo">Hash算法:</label>
+        <select id="hash-algo">
+            <option value="SHA-1">SHA-1</option>
+            <option value="SHA-256">SHA-256</option>
+            <option value="SHA-384">SHA-384</option>
+            <option value="SHA-512">SHA-512</option>
+        </select>
+    </div>
     <div id="drop_zone" class="dropzone">
-            <p>将文件拖拽到该区域</p>
+            <p id="drop-hint">将单个或多个文件拖拽到该区域</p>
             <table id="files_table">
                 <thead class="noneDisplay">
                     <tr>
-                      <th class="hashThWidth">hash</th>
+                      <th id="hash-header" class="hashThWidth">SHA-1</th>
                       <th class="sizeThWidth">size</th>
                       <th class="nameThWidth">name</th>
                     </tr>
@@ -27,10 +37,13 @@
                 <div class="dot"></div>
             </div>
     </div>
-    <div style="text-align: center;">
-        <span>
-            <a href="https://github.com/xavierskip/files_hash_in_browser" >项目地址</a>
-        </span>
+    <div class="footer">
+        <a class="github-link" href="https://github.com/xavierskip/files_hash_in_browser" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+            GitHub
+        </a>
     </div>
     <script src="main.js"></script>
 </body>

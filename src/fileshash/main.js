@@ -56,9 +56,16 @@ hashAlgoSelect.addEventListener('change', (e) => {
 });
 
 drop_zone.addEventListener('dragenter', function (e) {
-    this.classList.add("dragover");
-    dropHint.textContent = HINT_DROP;
     e.preventDefault();
+
+    // 检测是否为文件拖拽
+    if (!e.dataTransfer.types.includes('Files')) {
+        this.classList.add("unsupported");
+        dropHint.textContent = "请拖放文件，而不是字符串及其他";
+    } else {
+        this.classList.add("dragover");
+        dropHint.textContent = HINT_DROP;
+    }
 }, false);
 
 drop_zone.addEventListener('dragover', function (e) {
@@ -71,12 +78,21 @@ drop_zone.addEventListener('dragleave', function (e) {
         return false;
     }
     this.classList.remove("dragover");
+    this.classList.remove("unsupported");
     dropHint.textContent = HINT_DEFAULT;
 }, false);
 
 drop_zone.addEventListener('drop', async (e) => {
     e.preventDefault();
     drop_zone.classList.remove("dragover");
+    drop_zone.classList.remove("unsupported");
+
+    // 忽略非文件拖拽（如页面上的文字选择）
+    if (e.dataTransfer.files.length === 0) {
+        dropHint.textContent = HINT_DEFAULT;
+        return;
+    }
+
     dropHint.textContent = HINT_DEFAULT;
     thead.classList.remove('noneDisplay');
     for (const file of e.dataTransfer.files) {

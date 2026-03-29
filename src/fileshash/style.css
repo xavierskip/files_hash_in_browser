@@ -37,6 +37,12 @@
   border-style: dashed;
 }
 
+.dropzone.unsupported {
+  background-color: #ffe6e6;
+  border: 2px solid #d32f2f;
+  border-style: dashed;
+}
+
 #display_area {
   margin-top: 20px;
 }

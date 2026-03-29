@@ -8,6 +8,8 @@ const hashHeader = document.getElementById('hash-header');
 const hashAlgoSelect = document.getElementById('hash-algo');
 const dropHint = document.getElementById('drop-hint');
 const HINT_DEFAULT = '将单个或多个文件拖拽到该区域';
+const HINT_UNSUPPORTED_TYPE = '请拖放文件，而不是字符串或其他不支持的格式';
+const HINT_UNSUPPORTED_DIR = '包含文件夹及空文件，请拖入有效文件';
 const HINT_DROP = '释放以进行计算';
 
 // 从 URL 参数获取哈希算法
@@ -61,7 +63,7 @@ drop_zone.addEventListener('dragenter', function (e) {
     // 检测是否为文件拖拽
     if (!e.dataTransfer.types.includes('Files')) {
         this.classList.add("unsupported");
-        dropHint.textContent = "请拖放文件，而不是字符串及其他";
+        dropHint.textContent = HINT_UNSUPPORTED_TYPE;
     } else {
         this.classList.add("dragover");
         dropHint.textContent = HINT_DROP;
@@ -93,12 +95,13 @@ drop_zone.addEventListener('drop', async (e) => {
         return;
     }
 
+    // 正常处理文件
     dropHint.textContent = HINT_DEFAULT;
     thead.classList.remove('noneDisplay');
+    loader.style.display = "flex";
     for (const file of e.dataTransfer.files) {
         display_file(file);
     }
-    loader.style.display = "flex";
 }, false);
 
 async function getFileInfo(file) {
@@ -122,11 +125,16 @@ async function getFileName(file) {
 }
 
 async function infoDiff(){
-    const hash = tbody.querySelector('tr td').textContent;
-    let undone = 0;
-    if (hash == "") {
+    const td1 = tbody.querySelector('tr td');
+    if (!td1) {
+        // 清空已有结果
+        tbody.innerHTML = '';
+        thead.classList.add('noneDisplay');
+        loader.style.display = "none";
         return false;
     }
+    let undone = 0;
+    const hash = td1.textContent;
     for ( const tr of tbody.querySelectorAll('tr')) {
         const td = tr.querySelector('td');
         if (td.textContent == '') {
@@ -192,47 +200,55 @@ function setAllHashDisplayMode(humanReadable) {
 }
 
 async function display_file(file) {
-    var tr = document.createElement('tr');
-    const tdhash = document.createElement("td");
-    const tdsize = document.createElement("td");
-    const tdname = document.createElement("td");
-    tr.appendChild(tdhash);
-    tr.appendChild(tdsize);
-    tr.appendChild(tdname);
-    tbody.appendChild(tr);
+    if (file.size === 0) { // 跳过文件夹
+        // dropHint.textContent = HINT_UNSUPPORTED_DIR;  // 显示提示
+        showToast(HINT_UNSUPPORTED_DIR);
+        // setTimeout(() => {
+        //     dropHint.textContent = HINT_DEFAULT;  // 2秒后恢复默认提示
+        // }, 2000);
+    } else {
+        var tr = document.createElement('tr');
+        const tdhash = document.createElement("td");
+        const tdsize = document.createElement("td");
+        const tdname = document.createElement("td");
+        tr.appendChild(tdhash);
+        tr.appendChild(tdsize);
+        tr.appendChild(tdname);
+        tbody.appendChild(tr);
 
-    const fileSize = await getFileSize(file);
-    // 存储原始字节数，显示紧凑模式
-    tdsize.dataset.size = fileSize;
-    tdsize.textContent = fileSize;
-    tdsize.classList.add('size-cell');
+        const fileSize = await getFileSize(file);
+        // 存储原始字节数，显示紧凑模式
+        tdsize.dataset.size = fileSize;
+        tdsize.textContent = fileSize;
+        tdsize.classList.add('size-cell');
 
-    // 左键点击切换 size 显示模式
-    tdsize.addEventListener('click', () => {
-        toggleSizeDisplay(tdsize);
-    });
-
-    tdname.textContent = await getFileName(file);
-    const hash = await getHash(file);
-    // 存储原始哈希值，显示紧凑模式
-    tdhash.dataset.hash = hash;
-    tdhash.textContent = hash;
-    tdhash.classList.add('hash-cell');
-
-    // 左键点击切换显示模式
-    tdhash.addEventListener('click', (e) => {
-        toggleHashDisplay(tdhash);
-    });
-
-    // 右键复制当前显示的哈希值格式
-    tdhash.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        navigator.clipboard.writeText(tdhash.textContent).then(() => {
-            showToast('已复制到剪贴板');
-        }).catch(err => {
-            console.error('复制失败:', err);
+        // 左键点击切换 size 显示模式
+        tdsize.addEventListener('click', () => {
+            toggleSizeDisplay(tdsize);
         });
-    });
+
+        tdname.textContent = await getFileName(file);
+        const hash = await getHash(file);
+        // 存储原始哈希值，显示紧凑模式
+        tdhash.dataset.hash = hash;
+        tdhash.textContent = hash;
+        tdhash.classList.add('hash-cell');
+
+        // 左键点击切换显示模式
+        tdhash.addEventListener('click', (e) => {
+            toggleHashDisplay(tdhash);
+        });
+
+        // 右键复制当前显示的哈希值格式
+        tdhash.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            navigator.clipboard.writeText(tdhash.textContent).then(() => {
+                showToast('已复制到剪贴板');
+            }).catch(err => {
+                console.error('复制失败:', err);
+            });
+        });
+    }
 
     await infoDiff();
 }

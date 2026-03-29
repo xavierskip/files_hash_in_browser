@@ -35,6 +35,7 @@
 .dropzone.dragover {
   background-color: #eee;
   border-style: dashed;
+  border-color: rgb(34, 197, 94);
 }
 
 .dropzone.unsupported {

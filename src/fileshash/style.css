@@ -180,3 +180,50 @@
 .github-link svg {
   flex-shrink: 0;
 }
+
+/* 哈希值单元格样式 */
+.hash-cell {
+  cursor: pointer;
+  position: relative;
+}
+
+.hash-cell::after {
+  content: ' ⇄';
+  font-size: 12px;
+  color: #999;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.hash-cell:hover::after {
+  opacity: 1;
+}
+
+/* 显示模式提示 */
+.display-mode-hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #888;
+}
+
+/* Toast 提示 */
+#toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 1000;
+}
+
+#toast.show {
+  opacity: 1;
+}

@@ -127,6 +127,31 @@ async function infoDiff(){
     }
 }
 
+// 格式化哈希值为人类友好模式
+function formatHashHumanReadable(hash) {
+    return hash.toUpperCase().replace(/(.{8})/g, '$1 ').trim();
+}
+
+// 切换单个哈希单元格的显示模式
+function toggleHashDisplay(td) {
+    const compact = td.dataset.hash;
+    const current = td.textContent.replace(/\s/g, '');
+    if (current === compact) {
+        // 切换到人类友好模式
+        td.textContent = formatHashHumanReadable(compact);
+    } else {
+        // 切换到紧凑模式
+        td.textContent = compact;
+    }
+}
+
+// 设置全局显示模式（切换所有哈希值）
+function setAllHashDisplayMode(humanReadable) {
+    tbody.querySelectorAll('td[data-hash]').forEach(td => {
+        td.textContent = humanReadable ? formatHashHumanReadable(td.dataset.hash) : td.dataset.hash;
+    });
+}
+
 async function display_file(file) {
     var tr = document.createElement('tr');
     const tdhash = document.createElement("td");
@@ -139,8 +164,43 @@ async function display_file(file) {
 
     tdsize.textContent = await getFileSize(file);
     tdname.textContent = await getFileName(file);
-    tdhash.textContent = await getHash(file);
+    const hash = await getHash(file);
+    // 存储原始哈希值，显示紧凑模式
+    tdhash.dataset.hash = hash;
+    tdhash.textContent = hash;
+    tdhash.classList.add('hash-cell');
+
+    // 左键点击切换显示模式
+    tdhash.addEventListener('click', (e) => {
+        toggleHashDisplay(tdhash);
+    });
+
+    // 右键复制当前显示的哈希值格式
+    tdhash.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(tdhash.textContent).then(() => {
+            showToast('已复制到剪贴板');
+        }).catch(err => {
+            console.error('复制失败:', err);
+        });
+    });
+
     await infoDiff();
+}
+
+// 显示提示消息
+function showToast(message) {
+    let toast = document.getElementById('toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 1500);
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API/Non-cryptographic_uses_of_subtle_crypto#hashing_a_file

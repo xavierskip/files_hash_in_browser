@@ -132,6 +132,29 @@ function formatHashHumanReadable(hash) {
     return hash.toUpperCase().replace(/(.{8})/g, '$1 ').trim();
 }
 
+// 格式化文件大小为人类可读格式
+function formatSizeHumanReadable(bytes) {
+    if (bytes === 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const k = 1024;
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const size = (bytes / Math.pow(k, i)).toFixed(2);
+    return parseFloat(size) + ' ' + units[i];
+}
+
+// 切换单个 size 单元格的显示模式
+function toggleSizeDisplay(td) {
+    const bytes = td.dataset.size;
+    const current = td.textContent;
+    // 如果当前显示的是纯数字（原始字节），则切换到人类可读格式
+    if (current === bytes) {
+        td.textContent = formatSizeHumanReadable(parseInt(bytes));
+    } else {
+        // 切换回原始字节数
+        td.textContent = bytes;
+    }
+}
+
 // 切换单个哈希单元格的显示模式
 function toggleHashDisplay(td) {
     const compact = td.dataset.hash;
@@ -162,7 +185,17 @@ async function display_file(file) {
     tr.appendChild(tdname);
     tbody.appendChild(tr);
 
-    tdsize.textContent = await getFileSize(file);
+    const fileSize = await getFileSize(file);
+    // 存储原始字节数，显示紧凑模式
+    tdsize.dataset.size = fileSize;
+    tdsize.textContent = fileSize;
+    tdsize.classList.add('size-cell');
+
+    // 左键点击切换 size 显示模式
+    tdsize.addEventListener('click', () => {
+        toggleSizeDisplay(tdsize);
+    });
+
     tdname.textContent = await getFileName(file);
     const hash = await getHash(file);
     // 存储原始哈希值，显示紧凑模式

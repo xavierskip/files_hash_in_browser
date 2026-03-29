@@ -199,6 +199,24 @@
   opacity: 1;
 }
 
+/* size 单元格样式 */
+.size-cell {
+  cursor: pointer;
+  position: relative;
+}
+
+.size-cell::before {
+  content: '⇄ ';
+  font-size: 12px;
+  color: #999;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.size-cell:hover::before {
+  opacity: 1;
+}
+
 /* 显示模式提示 */
 .display-mode-hint {
   display: block;

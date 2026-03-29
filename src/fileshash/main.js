@@ -244,6 +244,11 @@ async function display_file(file) {
             e.preventDefault();
             navigator.clipboard.writeText(tdhash.textContent).then(() => {
                 showToast('已复制到剪贴板');
+                // 添加复制成功的视觉反馈
+                tdhash.classList.add('copied');
+                setTimeout(() => {
+                    tdhash.classList.remove('copied');
+                }, 100);
             }).catch(err => {
                 console.error('复制失败:', err);
             });

@@ -252,3 +252,10 @@
 #toast.show {
   opacity: 1;
 }
+
+/* 复制成功时的视觉反馈 - 文字放大效果 */
+.hash-cell.copied {
+  transform: scale(1.1);
+  transform-origin: left center;
+  transition: transform 0.2s ease;
+}

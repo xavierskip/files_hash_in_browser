@@ -1,3 +1,8 @@
+body {
+  background-color: #f6f5f0;
+  color: #1a1a1a;
+}
+
 .controls {
   margin: 10px 20px;
   text-align: center;
@@ -20,11 +25,14 @@
   padding: 35px;
   margin: 20px;
   text-align: center;
+  min-height: calc(50vh - 180px);
 }
 
 #drop_zone p {
   margin: 15px;
   padding: 5px;
+  font-size: 1.25rem;
+  color: #564a4a;
 }
 
 .dropzone {

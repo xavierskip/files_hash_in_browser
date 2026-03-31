@@ -7,6 +7,8 @@
     <title>files hash in browser</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='4' y='2' width='24' height='28' rx='2' fill='%23faebd7' stroke='%23ccc' stroke-width='1.5'/><text x='16' y='22' font-size='14' font-family='monospace' font-weight='bold' text-anchor='middle' fill='%23555'>H</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a5568">
 </head>
 <body>
     <div class="controls">
@@ -47,5 +49,19 @@
         </a>
     </div>
     <script src="main.js"></script>
+    <script>
+        // 注册 Service Worker 以实现离线访问
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker 注册成功: ', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('ServiceWorker 注册失败: ', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>

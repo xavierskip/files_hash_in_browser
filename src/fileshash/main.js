@@ -125,8 +125,8 @@ async function getFileName(file) {
 }
 
 async function infoDiff(){
-    const td1 = tbody.querySelector('tr td');
-    if (!td1) {
+    const tr1 = tbody.querySelector('tr');
+    if (!tr1) {
         // 清空已有结果
         tbody.innerHTML = '';
         thead.classList.add('noneDisplay');
@@ -134,13 +134,15 @@ async function infoDiff(){
         return false;
     }
     let undone = 0;
-    const hash = td1.textContent;
+    const td1 = tr1.querySelector('td[data-hash]');
+    const hash = td1 ? td1.dataset.hash : '';
     for ( const tr of tbody.querySelectorAll('tr')) {
-        const td = tr.querySelector('td');
-        if (td.textContent == '') {
+        const td = tr.querySelector('td[data-hash]');
+        if (!td) continue;
+        if (td.dataset.hash == '') {
             undone += 1;
         }
-        if (td.textContent == hash){
+        if (td.dataset.hash == hash){
             tr.className = 'trGreen';
         }else{
             tr.className = 'trRed';

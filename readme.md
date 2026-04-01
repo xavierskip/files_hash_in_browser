@@ -16,6 +16,7 @@
 - 并行获取文件的hash
 - 使用 Web Crypto API (`crypto.subtle.digest`) 进行哈希计算
 - 支持 URL 参数预选择算法：`?hash=sha-256`（不区分大小写）
+- PWA 应用支持离线使用。
 
 ## 项目结构
 ```

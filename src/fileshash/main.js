@@ -7,6 +7,10 @@ const tbody = table.querySelector("tbody");
 const hashHeader = document.getElementById('hash-header');
 const hashAlgoSelect = document.getElementById('hash-algo');
 const dropHint = document.getElementById('drop-hint');
+
+var Hasher = null; // 在 initHashAlgorithm 中初始化
+const TWO_GB = 2 * 1024 * 1024 * 1024; 
+const SUPPORTED_ALGORITHMS = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
 const HINT_DEFAULT = '将单个或多个文件拖拽到该区域';
 const HINT_UNSUPPORTED_TYPE = '请拖放文件，而不是字符串或其他不支持的格式';
 const HINT_UNSUPPORTED_DIR = '包含文件夹及空文件，请拖入有效文件';
@@ -18,8 +22,7 @@ function getHashAlgorithmFromURL() {
     const hashParam = params.get('hash');
     if (hashParam) {
         const normalized = hashParam.toUpperCase();
-        const supported = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
-        if (supported.includes(normalized)) {
+        if (SUPPORTED_ALGORITHMS.includes(normalized)) {
             return normalized;
         }
     }
@@ -40,10 +43,15 @@ function updateHashHeader(algo) {
 }
 
 // 初始化哈希算法选择
-function initHashAlgorithm() {
+async function initHashAlgorithm() {
     const algo = getHashAlgorithmFromURL();
     hashAlgoSelect.value = algo;
     updateHashHeader(algo);
+    Hasher = await hashwasm[algo === 'sha1' ? 'createSHA1' :
+                            algo === 'sha256' ? 'createSHA256' :
+                            algo === 'sha384' ? 'createSHA384' :
+                            algo === 'sha512' ? 'createSHA512' :
+                            'createSHA1']();
 }
 
 // 监听选择变化
@@ -57,6 +65,7 @@ hashAlgoSelect.addEventListener('change', (e) => {
     loader.style.display = 'none';
 });
 
+// 处理拖拽事件
 drop_zone.addEventListener('dragenter', function (e) {
     e.preventDefault();
 
@@ -104,7 +113,7 @@ drop_zone.addEventListener('drop', async (e) => {
     }
 }, false);
 
-async function getFileInfo(file) {
+async function getFileInfo(file, hashAlgo) {
     const namePromise = new Promise(resolve => {
         resolve(file.name);
     });
@@ -112,7 +121,7 @@ async function getFileInfo(file) {
         resolve(file.size);
     });
     const [name, size] = await Promise.all([namePromise, sizePromise]);
-    const hash = await getHash(file);
+    const hash = await getHash(file, hashAlgo);
     return { hash, size, name }
 }
 
@@ -218,24 +227,6 @@ async function display_file(file) {
         tr.appendChild(tdname);
         tbody.appendChild(tr);
 
-        const fileSize = await getFileSize(file);
-        // 存储原始字节数，显示紧凑模式
-        tdsize.dataset.size = fileSize;
-        tdsize.textContent = fileSize;
-        tdsize.classList.add('size-cell');
-
-        // 左键点击切换 size 显示模式
-        tdsize.addEventListener('click', () => {
-            toggleSizeDisplay(tdsize);
-        });
-
-        tdname.textContent = await getFileName(file);
-        const hash = await getHash(file);
-        // 存储原始哈希值，显示紧凑模式
-        tdhash.dataset.hash = hash;
-        tdhash.textContent = hash;
-        tdhash.classList.add('hash-cell');
-
         // 左键点击切换显示模式
         tdhash.addEventListener('click', (e) => {
             toggleHashDisplay(tdhash);
@@ -255,6 +246,32 @@ async function display_file(file) {
                 console.error('复制失败:', err);
             });
         });
+
+        // 左键点击切换 size 显示模式
+        tdsize.addEventListener('click', () => {
+            toggleSizeDisplay(tdsize);
+        });
+
+        const fileName = file.name;
+        const fileSize = file.size;
+        tdsize.dataset.name = fileName;
+        tdsize.dataset.size = fileSize;
+        tdname.textContent = fileName;
+        tdsize.textContent = fileSize;
+        tdsize.classList.add('size-cell');
+        
+        const algorithm = hashAlgoSelect.value;
+        let hash = '0';
+        if (file.size < TWO_GB) {
+            hash = await getHashStandard(file, algorithm);
+        } else {
+            hash = await getHashStreaming(file, Hasher);
+        }
+
+        // 存储原始哈希值，显示紧凑模式
+        tdhash.dataset.hash = hash;
+        tdhash.textContent = hash;
+        tdhash.classList.add('hash-cell');
     }
 
     await infoDiff();
@@ -275,22 +292,48 @@ function showToast(message) {
     }, 1500);
 }
 
-// https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API/Non-cryptographic_uses_of_subtle_crypto#hashing_a_file
-const getHash = async (file) => {
-    const algorithm = hashAlgoSelect.value;
+// 使用浏览器标准 API 计算哈希（适合小文件）
+const getHashStandard = async (file, algorithm) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = async () => {
             const buffer = reader.result;
-            const hashArray = await crypto.subtle.digest(algorithm, buffer);
-            const hashHex = Array.from(new Uint8Array(hashArray))
-                .map((b) => b.toString(16).padStart(2, '0'))
-                .join('');
-            resolve(hashHex);
+            const hashAsArrayBuffer = await crypto.subtle.digest(algorithm, buffer);
+            const uint8ViewOfHash = new Uint8Array(hashAsArrayBuffer);
+            if (typeof uint8ViewOfHash.toHex === 'function') {
+                resolve(uint8ViewOfHash.toHex());
+            } else {
+                const hashHex = Array.from(uint8ViewOfHash)
+                    .map((b) => b.toString(16).padStart(2, "0"))
+                    .join("");
+                resolve(hashHex);
+            }
         };
         reader.onerror = () => reject(reader.error);
         reader.readAsArrayBuffer(file);
     });
+};
+
+// 使用 hash-wasm 进行流式哈希计算（适合大文件）
+const getHashStreaming = async (file, hasher) => {
+    // 分块读取文件
+    const chunkSize = 32 * 1024 * 1024;
+    hasher.init();
+
+    for (let offset = 0; offset < file.size; offset += chunkSize) {
+        const chunk = file.slice(offset, offset + chunkSize);
+        const buffer = await chunk.arrayBuffer();
+        hasher.update(new Uint8Array(buffer));
+
+        // 让 UI 有机会更新
+        await new Promise(resolve => setTimeout(resolve, 0));
+    }
+    return hasher.digest();
+};
+
+// 根据文件大小自动选择哈希计算方式
+const getHash = async (file, algorithm) => {
+    
 };
 
 // 页面加载时初始化

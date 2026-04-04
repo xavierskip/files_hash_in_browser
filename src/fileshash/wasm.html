@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hash-wasm 性能测试</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { font-size: 1.5rem; color: #333; }
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        label { display: inline-block; margin-right: 10px; font-weight: bold; }
+        select {
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        #drop_zone {
+            border: 3px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            transition: all 0.2s;
+        }
+        #drop_zone.dragover {
+            border-color: #4CAF50;
+            background: #f0f8f0;
+        }
+        #file-input { display: none; }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #45a049; }
+        #result {
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+        #result.show { display: block; }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #666; }
+        .info-value { font-family: monospace; font-weight: bold; }
+        .hash-value {
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        #progress {
+            margin-top: 15px;
+            display: none;
+        }
+        #progress.show { display: block; }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        .error {
+            color: #f44336;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 4px;
+            display: none;
+        }
+        .error.show { display: block; }
+    </style>
+</head>
+<body>
+    <h1>hash-wasm 性能测试</h1>
+
+    <div class="controls">
+        <label for="hash-algo">Hash 算法:</label>
+        <select id="hash-algo">
+            <option value="sha1">SHA-1</option>
+            <option value="sha256" selected>SHA-256</option>
+            <option value="sha384">SHA-384</option>
+            <option value="sha512">SHA-512</option>
+            <option value="md5">MD5</option>
+        </select>
+    </div>
+
+    <div id="drop_zone">
+        <p>将文件拖拽到此处，或点击下方按钮选择文件</p>
+        <input type="file" id="file-input">
+        <label for="file-input" class="btn">选择文件</label>
+    </div>
+
+    <div id="progress">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text">0%</div>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <div id="result">
+        <div class="info-row">
+            <span class="info-label">文件名</span>
+            <span class="info-value" id="file-name"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">文件大小</span>
+            <span class="info-value" id="file-size"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">算法</span>
+            <span class="info-value" id="algo-name"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">耗时</span>
+            <span class="info-value" id="elapsed-time"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">速度</span>
+            <span class="info-value" id="hash-speed"></span>
+        </div>
+        <div class="hash-value" id="hash-result"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hash-wasm@4/dist/index.umd.min.js"></script>
+    <script>
+        const dropZone = document.getElementById('drop_zone');
+        const fileInput = document.getElementById('file-input');
+        const hashAlgo = document.getElementById('hash-algo');
+        const progress = document.getElementById('progress');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        const result = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+
+        // 拖拽事件
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                processFile(e.target.files[0]);
+            }
+        });
+
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const k = 1024;
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + units[i];
+        }
+
+        function showError(msg) {
+            errorDiv.textContent = msg;
+            errorDiv.classList.add('show');
+        }
+
+        function hideError() {
+            errorDiv.classList.remove('show');
+        }
+
+        async function processFile(file) {
+            hideError();
+            result.classList.remove('show');
+            progress.classList.add('show');
+
+            const algo = hashAlgo.value;
+            const startTime = performance.now();
+
+            try {
+                // 使用 hash-wasm 的 createSHA256 等函数
+                const hasher = await hashwasm[algo === 'sha1' ? 'createSHA1' :
+                                              algo === 'sha256' ? 'createSHA256' :
+                                              algo === 'sha384' ? 'createSHA384' :
+                                              algo === 'sha512' ? 'createSHA512' :
+                                              'createMD5']();
+
+                // 分块读取文件（1MB 每块）
+                const chunkSize = 32 * 1024 * 1024;
+                const totalChunks = Math.ceil(file.size / chunkSize);
+                let processedChunks = 0;
+
+                hasher.init();
+
+                for (let offset = 0; offset < file.size; offset += chunkSize) {
+                    const chunk = file.slice(offset, offset + chunkSize);
+                    const buffer = await chunk.arrayBuffer();
+                    hasher.update(new Uint8Array(buffer));
+
+                    processedChunks++;
+                    const percent = Math.round((processedChunks / totalChunks) * 100);
+                    progressFill.style.width = percent + '%';
+                    progressText.textContent = percent + '% (' + formatSize(offset + buffer.byteLength) + ' / ' + formatSize(file.size) + ')';
+
+                    // 让 UI 有机会更新
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+
+                const hash = hasher.digest();
+                const endTime = performance.now();
+                const elapsed = (endTime - startTime) / 1000;
+                const speed = file.size / elapsed / (1024 * 1024); // MB/s
+
+                // 显示结果
+                document.getElementById('file-name').textContent = file.name;
+                document.getElementById('file-size').textContent = formatSize(file.size);
+                document.getElementById('algo-name').textContent = algo.toUpperCase();
+                document.getElementById('elapsed-time').textContent = elapsed.toFixed(2) + ' 秒';
+                document.getElementById('hash-speed').textContent = speed.toFixed(2) + ' MB/s';
+                document.getElementById('hash-result').textContent = hash;
+
+                progress.classList.remove('show');
+                result.classList.add('show');
+
+            } catch (err) {
+                progress.classList.remove('show');
+                showError('计算失败: ' + err.message);
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

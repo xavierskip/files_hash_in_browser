@@ -235,8 +235,8 @@
                                               algo === 'sha512' ? 'createSHA512' :
                                               'createMD5']();
 
-                // 分块读取文件（1MB 每块）
-                const chunkSize = 32 * 1024 * 1024;
+                // 分块读取文件
+                const chunkSize = 64 * 1024 * 1024;
                 const totalChunks = Math.ceil(file.size / chunkSize);
                 let processedChunks = 0;
 

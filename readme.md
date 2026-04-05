@@ -36,8 +36,11 @@ npx serve src/fileshash/
 ```
 然后访问 http://localhost:8000
 
-## 目前发现的问题
-超过2GB大小文件无法获取到hash值。可能是某些浏览器沙箱对 `FileReader.readAsArrayBuffer()` 的限制。
+## 需要注意的事
+
+因为采用了浏览器标准函数 [crypto.subtle.digest](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest) 来计算hash值，此函数不支持流式输入，将数据传入摘要函数之前，必须先将整个输入读入内存，因此超过2GB大小文件无法通过浏览器的标准函数获取到hash值（桌面端浏览器对此的限制通常是2GB大小，其他的我没有测试，不太清楚）。
+
+所以引入了[hash-wasm](https://github.com/Daninet/hash-wasm)。用于计算大于2GB文件的hash值。
 
 ## 截图
 ![preview](screenshot.png)

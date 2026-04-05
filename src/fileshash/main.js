@@ -8,13 +8,13 @@ const hashHeader = document.getElementById('hash-header');
 const hashAlgoSelect = document.getElementById('hash-algo');
 const dropHint = document.getElementById('drop-hint');
 
-var Hasher = null; // 在 initHashAlgorithm 中初始化
 const TWO_GB = 2 * 1024 * 1024 * 1024; 
 const SUPPORTED_ALGORITHMS = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
 const HINT_DEFAULT = '将单个或多个文件拖拽到该区域';
 const HINT_UNSUPPORTED_TYPE = '请拖放文件，而不是字符串或其他不支持的格式';
 const HINT_UNSUPPORTED_DIR = '包含文件夹及空文件，请拖入有效文件';
 const HINT_DROP = '释放以进行计算';
+const HINT_ERROR = '发生了点错误';
 
 // 从 URL 参数获取哈希算法
 function getHashAlgorithmFromURL() {
@@ -42,20 +42,24 @@ function updateHashHeader(algo) {
     hashHeader.textContent = algo;
 }
 
+async function hashwasmCreate(algo){
+    const sha = algo.toUpperCase();
+    return await hashwasm[sha === 'SHA-1' ? 'createSHA1' :
+                            sha === 'SHA-256' ? 'createSHA256' :
+                            sha === 'SHA-384' ? 'createSHA384' :
+                            sha === 'SHA-512' ? 'createSHA512' :
+                            'createSHA1']();
+}
+
 // 初始化哈希算法选择
 async function initHashAlgorithm() {
     const algo = getHashAlgorithmFromURL();
     hashAlgoSelect.value = algo;
     updateHashHeader(algo);
-    Hasher = await hashwasm[algo === 'sha1' ? 'createSHA1' :
-                            algo === 'sha256' ? 'createSHA256' :
-                            algo === 'sha384' ? 'createSHA384' :
-                            algo === 'sha512' ? 'createSHA512' :
-                            'createSHA1']();
 }
 
 // 监听选择变化
-hashAlgoSelect.addEventListener('change', (e) => {
+hashAlgoSelect.addEventListener('change', async (e) => {
     const algo = e.target.value;
     updateURLParam(algo);
     updateHashHeader(algo);
@@ -108,9 +112,11 @@ drop_zone.addEventListener('drop', async (e) => {
     dropHint.textContent = HINT_DEFAULT;
     thead.classList.remove('noneDisplay');
     loader.style.display = "flex";
-    for (const file of e.dataTransfer.files) {
-        display_file(file);
-    }
+    hashAlgoSelect.disabled = true;
+    // for (const file of e.dataTransfer.files) {
+    //     display_file(file);
+    // }
+    await Promise.all([...e.dataTransfer.files].map(display_file));
 }, false);
 
 async function getFileInfo(file, hashAlgo) {
@@ -136,10 +142,13 @@ async function getFileName(file) {
 async function infoDiff(){
     const tr1 = tbody.querySelector('tr');
     if (!tr1) {
-        // 清空已有结果
+        // display_file 如果有正常处理的文件，就会有至少一个 tr 被添加到 tbody 中。
+        // 如果没有 tr，说明没有有效文件被处理。
+        // 清空已有结果, 隐藏表头和加载动画
         tbody.innerHTML = '';
         thead.classList.add('noneDisplay');
         loader.style.display = "none";
+        hashAlgoSelect.disabled = false;
         return false;
     }
     let undone = 0;
@@ -151,14 +160,20 @@ async function infoDiff(){
         if (td.dataset.hash == '') {
             undone += 1;
         }
-        if (td.dataset.hash == hash){
-            tr.className = 'trGreen';
-        }else{
-            tr.className = 'trRed';
-        }
+        if (hash != ''){  // 判断hash值是否有效,有效才进行比对并更改相关颜色
+            if (td.dataset.hash == ''){
+                continue;  // 如果当前行的哈希值还未计算完成，则跳过比对和颜色设置
+            }
+            if (td.dataset.hash == hash){
+                tr.className = 'trGreen';
+            }else{
+                tr.className = 'trRed';
+            }
+        }  
     }
     if (undone == 0){
         loader.style.display = "none";
+        hashAlgoSelect.disabled = false;
     }
 }
 
@@ -222,6 +237,7 @@ async function display_file(file) {
         const tdhash = document.createElement("td");
         const tdsize = document.createElement("td");
         const tdname = document.createElement("td");
+        tdhash.dataset.hash = ''; // 先设置默认值，后续计算完成后再更新这个值。
         tr.appendChild(tdhash);
         tr.appendChild(tdsize);
         tr.appendChild(tdname);
@@ -261,11 +277,25 @@ async function display_file(file) {
         tdsize.classList.add('size-cell');
         
         const algorithm = hashAlgoSelect.value;
-        let hash = '0';
+        const Hasher = await hashwasmCreate(algorithm);
+        let hash = '';  // 初始化哈希值为一个空字符串，表示尚未计算完成
         if (file.size < TWO_GB) {
-            hash = await getHashStandard(file, algorithm);
+            console.log(`crypto API: ${algorithm}`);
+            try {
+                hash = await getHashStandard(file, algorithm);
+            } catch (error) {
+                console.warn(error);
+                console.info(`crypto API failed, switching to hash-wasm`);
+                hash = await getHashStreaming(file, Hasher);
+            }
         } else {
-            hash = await getHashStreaming(file, Hasher);
+            console.log(`hash-wasm: ${algorithm}`);
+            try {
+                hash = await getHashStreaming(file, Hasher);
+            } catch (error) {
+                console.warn(error);
+                showToast(HINT_ERROR);
+            } 
         }
 
         // 存储原始哈希值，显示紧凑模式
@@ -329,11 +359,6 @@ const getHashStreaming = async (file, hasher) => {
         await new Promise(resolve => setTimeout(resolve, 0));
     }
     return hasher.digest();
-};
-
-// 根据文件大小自动选择哈希计算方式
-const getHash = async (file, algorithm) => {
-    
 };
 
 // 页面加载时初始化

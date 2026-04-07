@@ -13,6 +13,7 @@ html {
   --cream: #FDF6E3;
   --cream-dark: #F5ECD8;
   --yellow: #FFD93D;
+  --yellow-light: #f8e17c;
   --pink: #FF6B9D;
   --cyan: #48DBFB;
   --lavender: #c4b5fd;
@@ -354,7 +355,7 @@ body {
   color: var(--yellow);
   padding: 16px 32px;
   border: 2px solid var(--black);
-  box-shadow: 6px 6px 0px var(--pink);
+  box-shadow: 6px 6px 0px var(--yellow-light);
   font-family: "Space Grotesk", system-ui, sans-serif;
   font-weight: 700;
   font-size: 16px;

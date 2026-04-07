@@ -1,95 +1,171 @@
-body {
-  background-color: #f6f5f0;
-  color: #1a1a1a;
+@import "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap";
+
+* {
+  box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth
+}
+
+:root {
+  --cream-light:#FFF8EC;
+  --cream: #FDF6E3;
+  --cream-dark: #F5ECD8;
+  --yellow: #FFD93D;
+  --pink: #FF6B9D;
+  --cyan: #48DBFB;
+  --lavender: #c4b5fd;
+  --lime: #A8E6CF;
+  --black: #1A1A2E;
+  --white: #FFFFFF;
+  --grey: #DCDCDC;
+  --brutal-lime: #00a402;
+  --brutal-red: #dc2626;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--black);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 控件区域 */
 .controls {
-  margin: 10px 20px;
+  margin: 20px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .controls label {
-  margin-right: 8px;
-  font-family: monospace;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
 .controls select {
-  padding: 4px 8px;
-  font-family: monospace;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
+  padding: 8px 32px 8px 16px;
+  font-family: "Space Mono", monospace;
+  font-size: 14px;
+  border: 2px solid var(--black);
+  border-radius: 0;
+  background-color: var(--white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231A1A2E' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  box-shadow: 4px 4px 0px var(--black);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
 }
 
+.controls select:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0px var(--black);
+}
+
+.controls select:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--black);
+}
+
+/* 显示模式提示 */
+.display-mode-hint {
+  font-size: 12px;
+  color: var(--black);
+  opacity: 0.5;
+  font-family: "Space Mono", monospace;
+}
+
+/* 拖放区域 - 新粗野主义风格 */
 #drop_zone {
-  padding: 35px;
+  padding: 40px;
   margin: 20px;
   text-align: center;
   min-height: calc(50vh - 180px);
+  transition: all 0.1s ease;
 }
 
 #drop_zone p {
   margin: 15px;
   padding: 5px;
   font-size: 1.25rem;
-  color: #564a4a;
+  color: var(--black);
+  font-weight: 600;
+  font-family: "Space Grotesk", system-ui, sans-serif;
 }
 
 .dropzone {
-  background-color: #faebd7;
-  border: 2px solid #ccc;
+  background-color: var(--cream);
+  border: 2px dashed var(--black);
+  border: 2px dashed var(--black);
 }
 
-.dropzone.dragover {
-  background-color: #eee;
-  border-style: dashed;
-  border-color: rgb(34, 197, 94);
+.dragover {
+  background-color: var(--yellow);
+  border: 2px solid var(--black);
+  box-shadow: 6px 6px 0px var(--black);
 }
 
-.dropzone.unsupported {
-  background-color: #ffe6e6;
-  border: 2px solid #d32f2f;
-  border-style: dashed;
+.unsupported {
+  background-color: var(--pink);
+  border: 2px solid var(--black);
+  box-shadow: 6px 6px 0px var(--black);
 }
 
-#display_area {
-  margin-top: 20px;
-}
-
+/* 表格样式 */
 #files_table {
   width: 100%;
   text-align: left;
-  font-family: monospace;
-  font-size: medium;
+  font-family: "Space Mono", monospace;
+  font-size: 14px;
   table-layout: fixed;
   border-spacing: 0;
-  /* background-color: #f2f2f2; */
-  /* padding: 10px; */
-  /* margin: 10px; */
+  border-collapse: collapse;
+  box-shadow: 4px 4px 0px var(--black);
 }
 
 #files_table th,
 #files_table td {
   word-break: break-all;
   vertical-align: top;
+  padding: 12px 8px;
+  border-bottom: 2px solid var(--black);
 }
 
 #files_table th {
-  padding: 6px;
-  font-size: larger;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  background-color: var(--lime);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-#files_table th, td {
-  padding: 4px;
-}
-
-#files_table tbody{
-  border: 1px solid;
-  margin: 10px;
+#files_table tbody tr {
+  transition: background-color 0.2s;
 }
 
 #files_table tbody tr:nth-child(even) {
-  background-color: #f2efe9;
+  background-color: var(--cream);
+}
+
+#files_table tbody tr:nth-child(odd) {
+  background-color: var(--cream-light);
+}
+
+#files_table tbody tr:hover {
+  background-color: var(--lavender);
 }
 
 #files_table tbody tr td:nth-child(1):empty::before {
@@ -104,92 +180,124 @@ body {
   text-align: center;
 }
 
-#files_table tbody tr:nth-child(odd) {
-  background-color: #e5e0db;
-}
-
 .noneDisplay {
   display: none;
 }
+
 .hashThWidth {
   width: 55%;
 }
+
 .sizeThWidth {
   width: 10%;
   text-align: right;
 }
+
 .nameThWidth {
   width: 35%;
   text-align: center;
 }
-.trGreen{
-  color: forestgreen;
-}
-.trRed{
-  color: orangered;
+
+.trGreen {
+  color: var(--brutal-lime);
+  font-weight: 700;
 }
 
+.trRed {
+  color: var(--brutal-red);
+  font-weight: 700;
+}
+
+/* 加载动画 */
 .loader {
   display: none;
   align-items: center;
   justify-content: center;
-  height: 10px;
-  margin-top: 10px;
-  gap: 4px;
+  height: 20px;
+  margin-top: 20px;
+  gap: 6px;
 }
 
 .dot {
-  width: 5px;
-  height: 5px;
-  background-color: #ff943c;
+  width: 8px;
+  height: 8px;
+  background-color: var(--pink);
+      box-shadow: 1px 1px 0px var(--black);
   animation: dot-pulse 1s ease-in-out infinite;
 }
 
 .dot:nth-child(2) {
   animation-delay: 0.2s;
+  background-color: var(--cyan);
 }
+
 .dot:nth-child(3) {
   animation-delay: 0.4s;
+  background-color: var(--yellow);
 }
 
 @keyframes dot-pulse {
   0% {
     transform: scale(1);
-    opacity: 1;
   }
   50% {
     transform: scale(2);
-    opacity: 0.5;
   }
   100% {
     transform: scale(1);
-    opacity: 1;
   }
 }
 
+/* 页脚 */
 .footer {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
   margin-top: 20px;
+  padding: 20px;
+}
+
+.footer-link {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--black);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  padding: 8px 16px;
+  transition: all 0.1s ease;
+}
+
+.footer-link:hover {
+  background-color: var(--yellow);
 }
 
 .github-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  font-family: monospace;
+  gap: 8px;
+  padding: 10px 20px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
   font-size: 14px;
-  color: #555;
+  font-weight: 700;
+  color: var(--black);
   text-decoration: none;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  background-color: var(--cyan);
+  border: 2px solid var(--black);
+  box-shadow: 4px 4px 0px var(--black);
+  transition: all 0.1s ease;
 }
 
 .github-link:hover {
-  background-color: #e8e8e8;
-  border-color: #ccc;
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0px var(--black);
+}
+
+.github-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--black);
 }
 
 .github-link svg {
@@ -200,12 +308,14 @@ body {
 .hash-cell {
   cursor: pointer;
   position: relative;
+  font-family: "Space Mono", monospace;
 }
 
 .hash-cell::after {
   content: ' ⇄';
   font-size: 12px;
-  color: #999;
+  color: var(--black);
+  opacity: 0.4;
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -218,12 +328,14 @@ body {
 .size-cell {
   cursor: pointer;
   position: relative;
+  font-family: "Space Mono", monospace;
 }
 
 .size-cell::before {
   content: '⇄ ';
   font-size: 12px;
-  color: #999;
+  color: var(--black);
+  opacity: 0.4;
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -232,25 +344,20 @@ body {
   opacity: 1;
 }
 
-/* 显示模式提示 */
-.display-mode-hint {
-  display: block;
-  margin-top: 8px;
-  font-size: 12px;
-  color: #888;
-}
-
-/* Toast 提示 */
+/* Toast 提示 - 新粗野主义风格 */
 #toast {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-size: 14px;
+  background-color: var(--black);
+  color: var(--yellow);
+  padding: 16px 32px;
+  border: 2px solid var(--black);
+  box-shadow: 6px 6px 0px var(--pink);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
@@ -261,9 +368,61 @@ body {
   opacity: 1;
 }
 
-/* 复制成功时的视觉反馈 - 文字放大效果 */
+/* 复制成功时的视觉反馈 */
 .hash-cell.copied {
   transform: scale(1.1);
   transform-origin: left center;
-  transition: transform 0.2s ease;
+  transition: transform 0.5s ease;
+  background-color: var(--yellow) !important;
+}
+
+/* 文件选择按钮容器 */
+.file-input-container {
+  margin: 0 20px 20px 20px;
+  text-align: center;
+}
+
+.select-file-btn {
+  width: 100%;
+  padding: 16px 32px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--black);
+  background-color: var(--pink);
+  border: 2px solid var(--black);
+  box-shadow: 6px 6px 0px var(--black);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.select-file-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--black);
+}
+
+.select-file-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--black);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 9px;
+  height:9px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--black);
+  border: 1px solid var(--cream);
+}
+
+/* 选中样式 */
+::selection {
+  background-color: var(--yellow);
+  color: var(--black);
 }

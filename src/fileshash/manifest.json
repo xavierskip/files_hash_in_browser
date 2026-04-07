@@ -8,13 +8,13 @@
   "theme_color": "#faebd7",
   "icons": [
     {
-      "src": "icon-192x192.png",
-      "sizes": "192x192",
+      "src": "icon-96x96.png",
+      "sizes": "96x96",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect x='64' y='32' width='384' height='448' rx='32' fill='%23faebd7' stroke='%23ccc' stroke-width='20'/><text x='256' y='350' font-size='220' font-family='monospace' font-weight='bold' text-anchor='middle' fill='%23555'>H</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><g transform='rotate(10, 16, 16)'><rect x='3' y='3' width='22' height='22' fill='%23FDF6E3' stroke='%231A1A2E' stroke-width='2'/><rect x='7' y='7' width='22' height='22' fill='%231A1A2E'/><text x='14' y='20' font-size='12' font-family='Arial' font-weight='bold' text-anchor='middle' fill='%23FDF6E3'>H</text></g></svg>",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"

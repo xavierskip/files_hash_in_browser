@@ -361,5 +361,28 @@ const getHashStreaming = async (file, hasher) => {
     return hasher.digest();
 };
 
+// 文件选择按钮事件处理
+const fileInput = document.getElementById('file-input');
+const selectFileBtn = document.getElementById('select-file-btn');
+
+selectFileBtn.addEventListener('click', () => {
+    fileInput.click();
+});
+
+fileInput.addEventListener('change', async (e) => {
+    if (e.target.files.length === 0) {
+        return;
+    }
+
+    thead.classList.remove('noneDisplay');
+    loader.style.display = "flex";
+    hashAlgoSelect.disabled = true;
+
+    await Promise.all([...e.target.files].map(display_file));
+
+    // 清空 input 以便可以再次选择相同文件
+    fileInput.value = '';
+});
+
 // 页面加载时初始化
 initHashAlgorithm();

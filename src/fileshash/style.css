@@ -252,11 +252,18 @@ body {
 /* 页脚 */
 .footer {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 10px;
   margin-top: 20px;
   padding: 20px;
+}
+
+@media (min-width: 480px) {
+  .footer {
+    flex-direction: row;
+  }
 }
 
 .footer-link {

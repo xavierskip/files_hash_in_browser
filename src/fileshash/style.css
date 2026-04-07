@@ -310,6 +310,8 @@ body {
   cursor: pointer;
   position: relative;
   font-family: "Space Mono", monospace;
+  user-select: all;
+  -webkit-user-select: all;
 }
 
 .hash-cell::after {

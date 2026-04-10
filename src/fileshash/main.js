@@ -10,11 +10,11 @@ const dropHint = document.getElementById('drop-hint');
 
 const TWO_GB = 2 * 1024 * 1024 * 1024; 
 const SUPPORTED_ALGORITHMS = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
-const HINT_DEFAULT = '将单个或多个文件拖拽到该区域';
-const HINT_UNSUPPORTED_TYPE = '请拖放文件，而不是字符串或其他不支持的格式';
-const HINT_UNSUPPORTED_DIR = '包含文件夹及空文件，请拖入有效文件';
-const HINT_DROP = '释放以进行计算';
-const HINT_ERROR = '发生了点错误';
+const HINT_DEFAULT = t('hint_default');
+const HINT_UNSUPPORTED_TYPE = t('hint_unsupported_type');
+const HINT_UNSUPPORTED_DIR = t('hint_unsupported_dir');
+const HINT_DROP = t('hint_drop');
+const HINT_ERROR = t('hint_error');
 
 // 从 URL 参数获取哈希算法
 function getHashAlgorithmFromURL() {
@@ -252,14 +252,14 @@ async function display_file(file) {
         tdhash.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             navigator.clipboard.writeText(tdhash.textContent).then(() => {
-                showToast('已复制到剪贴板');
+                showToast(t('copy_success'));
                 // 添加复制成功的视觉反馈
                 tdhash.classList.add('copied');
                 setTimeout(() => {
                     tdhash.classList.remove('copied');
                 }, 100);
             }).catch(err => {
-                console.error('复制失败:', err);
+                console.error('copy failed:', err);
             });
         });
 

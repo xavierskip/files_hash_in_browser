@@ -63,7 +63,7 @@
         }
     };
 
-    // 支持的语言列表
+    // 支持的语言列表，第一个为默认语言
     const supportedLangs = ['zh', 'en', 'es'];
 
     /**
@@ -93,10 +93,10 @@
         }
 
         // 4. 默认中文
-        return 'zh';
+        return supportedLangs[0];
     }
 
-    // 当前语言 - 模块加载时立即检测，确保 main.js 中的常量能拿到正确语言
+    // 当前语言 - 模块加载时立即检测，确保使用相关函数使用此变量时能拿到正确语言
     let currentLang = detectLanguage();
 
     /**
@@ -177,29 +177,13 @@
 
         const menu = document.createElement('div');
         menu.id = 'lang-menu';
-        menu.style.cssText = `
-            position: absolute;
-            bottom: 100%;
-            right: -40px;
-            background: var(--cream, #FDF6E3);
-            border: 2px solid var(--black, #1A1A2E);
-            box-shadow: 4px 4px 0px var(--black, #1A1A2E);
-            margin-bottom: 8px;
-            z-index: 1000;
-            min-width: 120px;
-        `;
 
         supportedLangs.forEach(lang => {
             const item = document.createElement('div');
             item.textContent = getLangDisplayName(lang);
-            item.style.cssText = `
-                padding: 8px 16px;
-                cursor: pointer;
-                font-family: "Space Grotesk", system-ui, sans-serif;
-                font-size: 14px;
-                font-weight: 700;
-                ${lang === currentLang ? 'background: var(--yellow, #FFD93D);' : ''}
-            `;
+            if (lang === currentLang) {
+                item.style.background = 'var(--yellow, #FFD93D)';
+            }
             item.addEventListener('mouseenter', () => {
                 if (lang !== currentLang) {
                     item.style.background = 'var(--lavender, #c4b5fd)';

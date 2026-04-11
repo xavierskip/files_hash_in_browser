@@ -273,7 +273,7 @@ body {
   color: var(--black);
   text-decoration: underline;
   text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
   padding: 8px 16px;
   transition: all 0.1s ease;
 }
@@ -435,4 +435,24 @@ body {
 ::selection {
   background-color: var(--yellow);
   color: var(--black);
+}
+
+#lang-menu {
+  position: absolute;
+  bottom: 100%;
+  right: -40px;
+  background: var(--cream, #FDF6E3);
+  border: 2px solid var(--black, #1A1A2E);
+  box-shadow: 4px 4px 0px var(--black, #1A1A2E);
+  margin-bottom: 8px;
+  z-index: 1000;
+  min-width: 120px;
+}
+
+#lang-menu div{
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
 }

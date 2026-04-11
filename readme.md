@@ -1,4 +1,4 @@
-# File Hash Calculator
+# File Hash Comparator
 
 A browser-side file hash calculation tool. No upload needed, all processing is done locally.
 

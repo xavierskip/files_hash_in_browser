@@ -5,7 +5,7 @@
     // 翻译字典
     const translations = {
         'zh': {
-            'page_title': '文件Hash计算器',
+            'page_title': '哈希值比对器',
             'algo_label': 'Hash算法:',
             'size_header': '大小',
             'name_header': '名称',
@@ -25,7 +25,7 @@
             'test_page': 'Hash-WASM 测试'
         },
         'en': {
-            'page_title': 'files hash in browser',
+            'page_title': 'File Hash Comparator',
             'algo_label': 'Hash Algorithm:',
             'size_header': 'SIZE',
             'name_header': 'NAME',
@@ -45,7 +45,7 @@
             'test_page': 'Test Hash-WASM'
         },
         'es': {
-            'page_title': 'Calculadora Hash',
+            'page_title': 'Comparador de Hash',
             'algo_label': 'Algoritmo Hash:',
             'size_header': 'TAMAÑO',
             'name_header': 'NOMBRE',
@@ -65,7 +65,7 @@
             'test_page': 'Prueba Hash-WASM'
         },
         'fr': {
-            'page_title': 'Calculateur de Hash',
+            'page_title': 'Comparateur de Hachage',
             'algo_label': 'Algorithme Hash:',
             'size_header': 'TAILLE',
             'name_header': 'NOM',

@@ -1,10 +1,24 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
+    <title>文件哈希计算器 - 浏览器端计算 SHA-1/SHA-256/SHA-384/SHA-512</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>files hash in browser</title>
+    <meta name="description" content="免费的浏览器端文件哈希计算工具。无需上传，本地计算文件 SHA-1、SHA-256、SHA-384、SHA-512 哈希值，支持多文件对比。快速、安全、保护隐私。">
+    <meta name="keywords" content="文件哈希,哈希计算器,SHA-1,SHA-256,SHA-384,SHA-512,文件校验,hash calculator,file hash">
+    <meta name="author" content="xavierskip">
+    <!-- Open Graph -->
+    <meta property="og:title" content="文件哈希计算器">
+    <meta property="og:description" content="浏览器端本地计算文件哈希值，支持 SHA-1/SHA-256/SHA-384/SHA-512，无需上传保护隐私。Compute file hash values locally in the browser, supporting SHA-1/SHA-256/SHA-384/SHA-512. No upload required to protect privacy.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://files-hash-in-browser.vercel.app/">
+    <meta property="og:image" content="https://files-hash-in-browser.vercel.app/icon-128x128.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="文件哈希计算器">
+    <meta name="twitter:description" content="浏览器端本地计算文件哈希值工具">
+    <meta name="theme-color" content="#FDF6E3">
+    <link rel="canonical" href="https://files-hash-in-browser.vercel.app/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -12,7 +26,31 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><g transform='rotate(10, 16, 16)'><rect x='3' y='4' width='22' height='22' fill='%23FDF6E3' stroke='%231A1A2E' stroke-width='2'/><rect x='7' y='7' width='22' height='22' fill='%231A1A2E'/><text x='14' y='21' font-size='15' font-family='Arial' font-weight='bold' text-anchor='middle' fill='%23FDF6E3'>%23</text></g></svg>">
     <link rel="apple-touch-icon" href="icon-128x128.png">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#FDF6E3">
+
+    <!-- 结构化数据 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "文件哈希计算器",
+      "description": "浏览器端文件哈希计算工具，支持 SHA-1/SHA-256/SHA-384/SHA-512",
+      "url": "https://files-hash-in-browser.vercel.app/",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "featureList": "SHA-1, SHA-256, SHA-384, SHA-512, File hash calculation, Drag and drop, Local computation",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "inLanguage": ["zh", "en", "es", "fr"],
+      "author": {
+        "@type": "Person",
+        "name": "xavierskip"
+      }
+    }
+    </script>
 </head>
 <body>
     <div class="controls">

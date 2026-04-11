@@ -5,7 +5,7 @@
     // 翻译字典
     const translations = {
         'zh': {
-            'page_title': 'Hash计算器',
+            'page_title': '文件Hash计算器',
             'algo_label': 'Hash算法:',
             'size_header': '大小',
             'name_header': '名称',

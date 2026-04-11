@@ -1,6 +1,6 @@
 {
-  "name": "文件哈希计算器",
-  "short_name": "文件哈希",
+  "name": "文件哈希值比对器",
+  "short_name": "哈希比对",
   "description": "浏览器端文件哈希计算工具，支持 SHA-1/SHA-256/SHA-384/SHA-512",
   "lang": "zh-CN",
   "id": "/",

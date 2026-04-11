@@ -21,6 +21,7 @@
             'lang_zh': '中文',
             'lang_en': 'English',
             'lang_es': 'Español',
+            'lang_fr': 'Français',
             'test_page': 'Hash-WASM 测试'
         },
         'en': {
@@ -40,6 +41,7 @@
             'lang_zh': '中文',
             'lang_en': 'English',
             'lang_es': 'Español',
+            'lang_fr': 'Français',
             'test_page': 'Test Hash-WASM'
         },
         'es': {
@@ -59,12 +61,33 @@
             'lang_zh': '中文',
             'lang_en': 'English',
             'lang_es': 'Español',
+            'lang_fr': 'Français',
             'test_page': 'Prueba Hash-WASM'
+        },
+        'fr': {
+            'page_title': 'Calculateur de Hash',
+            'algo_label': 'Algorithme Hash:',
+            'size_header': 'TAILLE',
+            'name_header': 'NOM',
+            'hint_default': 'Glissez un ou plusieurs fichiers dans cette zone',
+            'hint_unsupported_type': 'Veuillez déposer des fichiers, pas du texte ou d\'autres formats non supportés',
+            'hint_unsupported_dir': 'Les dossiers et fichiers vides ont été ignorés',
+            'hint_drop': 'Relâchez pour calculer',
+            'hint_error': 'Une erreur s\'est produite',
+            'display_hint': '(Cliquez sur le hash pour changer le format, clic droit pour copier)',
+            'select_file': 'Sélectionner des fichiers',
+            'copy_success': 'Copié dans le presse-papiers',
+            'language': '🌐 Langue',
+            'lang_zh': '中文',
+            'lang_en': 'English',
+            'lang_es': 'Español',
+            'lang_fr': 'Français',
+            'test_page': 'Test Hash-WASM'
         }
     };
 
     // 支持的语言列表，第一个为默认语言
-    const supportedLangs = ['zh', 'en', 'es'];
+    const supportedLangs = ['zh', 'en', 'es', 'fr'];
 
     /**
      * 获取语言优先级：URL参数 > localStorage > 浏览器语言 > 默认中文

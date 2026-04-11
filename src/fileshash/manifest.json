@@ -2,7 +2,10 @@
   "name": "文件哈希计算器",
   "short_name": "文件哈希",
   "description": "浏览器端文件哈希计算工具，支持 SHA-1/SHA-256/SHA-384/SHA-512",
+  "lang": "zh-CN",
+  "id": "/",
   "start_url": ".",
+  "scope": ".",
   "display": "standalone",
   "background_color": "#f6f5f0",
   "theme_color": "#faebd7",
@@ -11,13 +14,35 @@
       "src": "icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><g transform='rotate(10, 16, 16)'><rect x='3' y='4' width='22' height='22' fill='%23FDF6E3' stroke='%231A1A2E' stroke-width='2'/><rect x='7' y='7' width='22' height='22' fill='%231A1A2E'/><text x='14' y='21' font-size='15' font-family='Arial' font-weight='bold' text-anchor='middle' fill='%23FDF6E3'>%23</text></g></svg>",
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-wide.png",
+      "sizes": "2560x1480",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "文件哈希计算器桌面端界面"
+    },
+    {
+      "src": "screenshot-narrow.png",
+      "sizes": "430x932",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "文件哈希计算器移动端界面"
     }
   ]
 }

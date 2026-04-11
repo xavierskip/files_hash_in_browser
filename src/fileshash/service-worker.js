@@ -1,9 +1,10 @@
-const CACHE_NAME = 'files-hash-v1';
+const CACHE_NAME = 'files-hash-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './style.css',
-  './main.js'
+  './main.js',
+  './i18n.js'
 ];
 
 // 安装时缓存静态资源
@@ -31,6 +32,11 @@ self.addEventListener('activate', (event) => {
 // 拦截请求
 // 策略：stale-while-revalidate（先返回缓存，后台更新）
 self.addEventListener('fetch', (event) => {
+  // 只处理同源请求
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       // 1. 如果有缓存，先返回缓存（快速响应）
